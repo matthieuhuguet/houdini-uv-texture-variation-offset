@@ -48,8 +48,33 @@ This project started from the need to instance different tiles for a game-ready 
 
 | File | Description |
 |------|-------------|
-| `UV_TextureVariationOffset1.hiplc` | Full Houdini scene — test network `/obj/test_planks` |
-| `UV_TestPlanks.hdalc` | HDA — UV_TestPlanks node (zenray.dev) |
+| `UV_TextureVariationOffset1.hiplc` | Full Houdini scene — test network `/obj/test_planks` (V1) |
+| `UV_TestPlanks.hdalc` | HDA V2.1 — UV_TestPlanks node (zenray.dev) |
+| `UV_TestPlanks.3.1.hdalc` | HDA V3.1 — procedural naming + foreach UV variation (zenray.dev) |
+
+---
+
+## V2 — Procedural Naming + UV Variation (2026-05-04)
+
+The second iteration replaces the manual Name node chain with a single VEX wrangle and adds per-instance UV Y randomization via a For Each loop.
+
+**Key formulas:**
+
+```vex
+// On packed templates (Run Over: Primitives, after pack)
+s@name = sprintf("A%d", @primnum + 1);
+
+// On destination points (Run Over: Points)
+s@name = sprintf("A%d", @ptnum % 40 + 1);
+
+// Inside For Each loop — UV offset (Run Over: Vertices)
+int iter = detail(1, "iteration", 0);
+@uv.y += rand(iter + 42);
+```
+
+**Graph:** `/obj/uv_testplanks_dev/`
+
+**Node count:** V1 ~25 nodes → V2 ~15 nodes
 
 ---
 
